@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressContainer = document.querySelector('.upload-progress');
     const uploadInfo = document.querySelector('.upload-info');
 
-    // Drag and drop events
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         uploadArea.addEventListener(eventName, preventDefaults, false);
         document.body.addEventListener(eventName, preventDefaults, false);
@@ -22,10 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     uploadArea.addEventListener('drop', handleDrop, false);
 
-    // File input change event
     fileInput.addEventListener('change', handleFileSelect);
 
-    // Form submit event
     uploadForm.addEventListener('submit', handleSubmit);
 
     function preventDefaults(e) {
@@ -54,21 +51,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleFileSelect() {
         const file = fileInput.files[0];
         if (file) {
-            // Verificar se é um arquivo de vídeo
+
             if (!file.type.startsWith('video/')) {
                 alert('Por favor, selecione um arquivo de vídeo.');
                 fileInput.value = '';
                 return;
             }
 
-            // Verificar tamanho do arquivo (100MB em bytes)
             if (file.size > 100 * 1024 * 1024) {
                 alert('O arquivo é muito grande. O tamanho máximo é 100MB.');
                 fileInput.value = '';
                 return;
             }
 
-            // Atualizar a informação do arquivo
             uploadInfo.innerHTML = `
                 Arquivo selecionado: ${file.name}<br>
                 <small>Tamanho: ${formatFileSize(file.size)}</small>
@@ -80,11 +75,9 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
 
         const formData = new FormData(uploadForm);
-        
-        // Mostrar barra de progresso
+
         progressContainer.style.display = 'block';
-        
-        // Fazer upload com XMLHttpRequest para mostrar progresso
+
         const xhr = new XMLHttpRequest();
         
         xhr.upload.addEventListener('progress', function(e) {
@@ -98,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
                 if (response.success) {
-                    window.location.href = '/';  // Redirecionar para a página inicial
+                    window.location.href = '/';  
                 } else {
                     alert('Erro ao fazer upload: ' + response.message);
                 }

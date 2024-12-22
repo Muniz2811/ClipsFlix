@@ -59,23 +59,19 @@ class Clip(db.Model):
     upload_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# Função para criar o banco de dados e o usuário admin
 def init_db():
     with app.app_context():
-        # Criar todas as tabelas
+
         db.create_all()
-        
-        # Verificar se já existe um usuário admin
+
         admin = User.query.filter_by(username='admin').first()
         if not admin:
-            # Criar usuário admin
             admin = User(username='admin')
             admin.set_password('admin123')
             db.session.add(admin)
             db.session.commit()
             print('Usuário admin criado com sucesso!')
 
-# Inicializar o banco de dados
 init_db()
 
 @login_manager.user_loader
@@ -192,4 +188,4 @@ def delete_clip(clip_id):
 if __name__ == '__main__':
     app.run(debug=True)
 else:
-    init_db()  # Isso garante que o banco seja criado no Render
+    init_db() 
