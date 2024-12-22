@@ -1,0 +1,171 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.aurora-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/static/images/jettfim.jpg') no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: -1;
+}
+
+.upload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.upload-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.upload-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+.upload-title span {
+    color: #5ce1e6;
+}
+
+.upload-form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 15px 25px;
+    color: white;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.upload-form-control:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: none;
+    color: white;
+}
+
+.upload-form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.upload-area {
+    position: relative;
+    margin: 30px 0;
+    padding: 30px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.upload-area.highlight {
+    border-color: #5ce1e6;
+    background: rgba(92, 225, 230, 0.1);
+    transform: scale(1.02);
+}
+
+.upload-area:hover {
+    border-color: rgba(92, 225, 230, 0.5);
+}
+
+.upload-area input[type="file"] {
+    background: transparent;
+    border: none;
+    width: 100%;
+    color: white;
+    cursor: pointer;
+    padding: 20px;
+}
+
+.upload-area input[type="file"]::-webkit-file-upload-button {
+    background: rgba(92, 225, 230, 0.2);
+    border: 1px solid rgba(92, 225, 230, 0.3);
+    border-radius: 50px;
+    color: white;
+    padding: 12px 24px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-area input[type="file"]::-webkit-file-upload-button:hover {
+    background: rgba(92, 225, 230, 0.3);
+    transform: translateY(-2px);
+}
+
+.upload-info {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+.upload-btn {
+    background: linear-gradient(45deg, #5ce1e6, #4a90e2);
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(92, 225, 230, 0.4);
+}
+
+/* Progress bar styles */
+.upload-progress {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    height: 6px;
+    margin-top: 20px;
+    overflow: hidden;
+    display: none;
+}
+
+.upload-progress-bar {
+    background: linear-gradient(45deg, #5ce1e6, #4a90e2);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .upload-card {
+        padding: 30px;
+    }
+    
+    .upload-title {
+        font-size: 2em;
+    }
+    
+    .upload-area {
+        padding: 20px;
+    }
+}

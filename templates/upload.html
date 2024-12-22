@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="aurora-bg"></div>
+<div class="upload-container">
+    <div class="upload-card">
+        <div class="upload-title">
+            Coloque seu<span> clipezudo </span>
+        </div>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-4">
+                <input type="text" class="upload-form-control" id="title" name="title" placeholder="Título do clip" required>
+            </div>
+            <div class="mb-4">
+                <input type="text" class="upload-form-control" id="game" name="game" placeholder="Nome do jogo" required>
+            </div>
+            <div class="upload-area">
+                <input type="file" id="video" name="video" accept="video/*" required>
+                <div class="upload-info">
+                    Arraste seu vídeo aqui ou clique para selecionar<br>
+                    <small>Tamanho máximo: 100MB</small>
+                </div>
+            </div>
+            <div class="upload-progress">
+                <div class="upload-progress-bar"></div>
+            </div>
+            <button type="submit" class="upload-btn">FAZER UPLOAD</button>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}
