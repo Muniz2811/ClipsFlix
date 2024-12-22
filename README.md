@@ -1,6 +1,6 @@
 # ClipsFlix
 
-Uma plataforma para compartilhamento de clipes de jogos, construída com Flask e Cloudinary.
+Site criado para estudo com a finalidade de compartilhar de clipes de jogos, construída com Flask e Cloudinary.
 
 ## Funcionalidades
 
@@ -50,7 +50,3 @@ python app.py
 ```
 
 5. Acesse http://localhost:5000
-
-## Contribuindo
-
-Sinta-se à vontade para contribuir com o projeto! Abra uma issue ou envie um pull request.
