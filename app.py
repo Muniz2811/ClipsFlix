@@ -41,8 +41,14 @@ cloudinary.config(
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(500), nullable=False)
+    password_hash = db.Column(db.String(500), nullable=False)  
     clips = db.relationship('Clip', backref='author', lazy=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Clip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,10 +69,8 @@ def init_db():
         admin = User.query.filter_by(username='admin').first()
         if not admin:
             # Criar usuário admin
-            admin = User(
-                username='admin',
-                password=generate_password_hash('admin123')
-            )
+            admin = User(username='admin')
+            admin.set_password('admin123')
             db.session.add(admin)
             db.session.commit()
             print('Usuário admin criado com sucesso!')
@@ -96,7 +100,8 @@ def register():
             flash('Nome de usuário já existe')
             return redirect(url_for('register'))
         
-        user = User(username=username, password=generate_password_hash(password))
+        user = User(username=username)
+        user.set_password(password)
         db.session.add(user)
         db.session.commit()
         
@@ -110,7 +115,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         
-        if user and check_password_hash(user.password, password):
+        if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('index'))
         flash('Usuário ou senha inválidos')
