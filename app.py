@@ -12,16 +12,17 @@ import cloudinary.api
 
 load_dotenv()
 
-# Configuração do Cloudinary
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)
+# Configuração do banco de dados
+if os.getenv('DATABASE_URL'):
+    # Render PostgreSQL database
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace('postgres://', 'postgresql://')
+else:
+    # SQLite local para desenvolvimento
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clips.db'
 
-app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///clips.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -29,18 +30,14 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-def init_db():
-    with app.app_context():
-        db.create_all()
-        # Verificar se já existe um usuário admin
-        if not User.query.filter_by(username='admin').first():
-            admin = User(
-                username='admin',
-                password_hash=generate_password_hash('admin123')
-            )
-            db.session.add(admin)
-            db.session.commit()
+# Configuração do Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
+# Modelos
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -56,6 +53,27 @@ class Clip(db.Model):
     upload_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+# Função para criar o banco de dados e o usuário admin
+def init_db():
+    with app.app_context():
+        # Criar todas as tabelas
+        db.create_all()
+        
+        # Verificar se já existe um usuário admin
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            # Criar usuário admin
+            admin = User(
+                username='admin',
+                password_hash=generate_password_hash('admin123')
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print('Usuário admin criado com sucesso!')
+
+# Inicializar o banco de dados
+init_db()
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -63,6 +81,9 @@ def load_user(user_id):
 @app.route('/')
 def index():
     clips = Clip.query.order_by(Clip.upload_date.desc()).all()
+    print("Clips encontrados:", len(clips))
+    for clip in clips:
+        print(f"Clip ID: {clip.id}, Title: {clip.title}, URL: {clip.video_url}")
     return render_template('index.html', clips=clips)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -106,13 +127,16 @@ def logout():
 def upload():
     if request.method == 'POST':
         if 'video' not in request.files:
+            print("Erro: Nenhum arquivo enviado")
             return jsonify({'success': False, 'message': 'Nenhum arquivo enviado'})
         
         file = request.files['video']
         if file.filename == '':
+            print("Erro: Nenhum arquivo selecionado")
             return jsonify({'success': False, 'message': 'Nenhum arquivo selecionado'})
         
         try:
+            print(f"Iniciando upload para Cloudinary: {file.filename}")
             # Upload para o Cloudinary
             result = cloudinary.uploader.upload(file,
                 resource_type="video",
@@ -120,6 +144,7 @@ def upload():
                 eager=[{"streaming_profile": "full_hd"}],
                 eager_async=True
             )
+            print(f"Upload bem sucedido! URL: {result['secure_url']}")
             
             clip = Clip(
                 title=request.form['title'],
@@ -130,9 +155,11 @@ def upload():
             )
             db.session.add(clip)
             db.session.commit()
+            print(f"Clip salvo no banco de dados com ID: {clip.id}")
             
             return jsonify({'success': True, 'message': 'Upload realizado com sucesso'})
         except Exception as e:
+            print(f"Erro durante o upload: {str(e)}")
             return jsonify({'success': False, 'message': f'Erro ao fazer upload: {str(e)}'})
             
     return render_template('upload.html')
@@ -158,7 +185,6 @@ def delete_clip(clip_id):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
 else:
     init_db()  # Isso garante que o banco seja criado no Render
