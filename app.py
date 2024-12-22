@@ -41,7 +41,7 @@ cloudinary.config(
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     clips = db.relationship('Clip', backref='author', lazy=True)
 
 class Clip(db.Model):
@@ -65,7 +65,7 @@ def init_db():
             # Criar usuário admin
             admin = User(
                 username='admin',
-                password_hash=generate_password_hash('admin123')
+                password=generate_password_hash('admin123')
             )
             db.session.add(admin)
             db.session.commit()
@@ -96,7 +96,7 @@ def register():
             flash('Nome de usuário já existe')
             return redirect(url_for('register'))
         
-        user = User(username=username, password_hash=generate_password_hash(password))
+        user = User(username=username, password=generate_password_hash(password))
         db.session.add(user)
         db.session.commit()
         
@@ -110,7 +110,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         
-        if user and check_password_hash(user.password_hash, password):
+        if user and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('index'))
         flash('Usuário ou senha inválidos')
