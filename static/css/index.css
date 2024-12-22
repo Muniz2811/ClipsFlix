@@ -1,5 +1,4 @@
 body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
     color: white;
     min-height: 100vh;
 }
@@ -10,7 +9,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('/static/images/game-bg.jpg') no-repeat center center fixed;
+    background: url('../images/fundoHOME.jpg') no-repeat center center fixed;
     background-size: cover;
     opacity: 0.3;
     z-index: -1;
